@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/upload-artifact@v3.1.2
+ 
     - name: Set up Go
       uses: actions/setup-go@v3
       with:
@@ -25,19 +25,9 @@ jobs:
     - name: Test
       run: go test -v ./...
       
-      
-      
-    - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3.1.2
-      with: 
+    - uses: actions/upload-artifact@v3
+      with:
         name: my-artifact
-        path: ./hellow
-  
-         
-    # A file, directory or wildcard pattern that describes what to upload
-    
-    # The desired behavior if no files are found using the provided path.
+        path: ./
 
-
-  
-        retention-days: 30
+      
