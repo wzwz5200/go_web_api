@@ -3,19 +3,22 @@ package comm
 import (
 	"fmt"
 	"hellow/model"
+	"log"
 	"net/url"
 
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 
 var DB *gorm.DB
+var PgDB *gorm.DB
 
 
 func InitDB() *gorm.DB {
 
-	host := "127.0.0.1"
+	host := "192.168.10.240"
 	port := "3306"
 	database := "golang"
 	username := "golang"
@@ -36,4 +39,20 @@ func InitDB() *gorm.DB {
 
 func GetDB() *gorm.DB {
 	return DB
+}
+
+func GetPG() *gorm.DB {
+	dsn := "host=127.0.0.1 port=5432 user=postgres dbname=golang password=123456 sslmode=disable TimeZone=Asia/Shanghai"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Println(err)
+	}
+	db.AutoMigrate(&model.User{})
+
+	PgDB = db
+	return db
+}
+
+func GetPGDB() *gorm.DB {
+	return PgDB
 }

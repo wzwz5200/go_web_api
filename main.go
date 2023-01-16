@@ -39,17 +39,21 @@ func ping(c *gin.Context){
 
 func main() {
 	// c :=fool("w",3)
-	gin.SetMode(gin.ReleaseMode)
+
 	
 	// fmt.Println("c=" ,c)
     // var a int = 1
 	// changeAV(&a)
 	// fmt.Println("a=", a)
-    comm.InitDB()
+	
+    comm.GetPG()
 	fmt.Println("W")
 
+
 	r := gin.Default()
+	
 	r = CollectRoute(r)
+
 	r.GET("/ping", ping)
 	
 

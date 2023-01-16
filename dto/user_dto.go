@@ -9,7 +9,7 @@ type UserDto struct {
 
 func ToUserDto(user model.User) UserDto {
 	return UserDto{
-		Name:      user.Name,
+		Name:      user.Names,
 		Telephone: user.Telephone,
 	}
 }

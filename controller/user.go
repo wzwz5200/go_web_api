@@ -18,12 +18,12 @@ import (
 )
 func WwWw(ctx *gin.Context) { 
 
-	DB := comm.GetDB()
+	DB := comm.GetPGDB()
 	var requestUser = model.User{}
 	ctx.Bind(&requestUser)
 
 	// 获取参数 名称、手机号和密码
-	name := requestUser.Name
+	name := requestUser.Names
 	telephone := requestUser.Telephone
 	password := requestUser.Password
 	fmt.Println(name,telephone,password)
@@ -57,7 +57,7 @@ func WwWw(ctx *gin.Context) {
 		return
 	}
 	newUser := model.User{
-		Name:      name,
+		Names:      name,
 		Telephone: telephone,
 		Password:  string(hashedPassword),
 	}
@@ -79,7 +79,7 @@ func isTelephoneExist(db *gorm.DB, telephone string) bool {
 
 
 func Login(ctx *gin.Context) {
-	DB := comm.GetDB()
+	DB := comm.GetPGDB()
 	//获取数据
 	//使用map获取请求参数
 	var requestUser = model.User{}
@@ -132,3 +132,16 @@ func Info(ctx *gin.Context) {
 		"data": gin.H{"user": dto.ToUserDto(user.(model.User))},
 	})
 }
+
+func Upatefile(ctx *gin.Context) {
+
+		// 单文件
+		file, _ := ctx.FormFile("./")
+		log.Println(file.Filename)
+
+		dst := "./" + file.Filename
+		// 上传文件至指定的完整文件路径
+		ctx.SaveUploadedFile(file, dst)
+
+		ctx.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+} 
