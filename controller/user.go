@@ -16,7 +16,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
-func WwWw(ctx *gin.Context) { 
+
+func Registe(ctx *gin.Context) {
 
 	DB := comm.GetPGDB()
 	var requestUser = model.User{}
@@ -26,15 +27,15 @@ func WwWw(ctx *gin.Context) {
 	name := requestUser.Names
 	telephone := requestUser.Telephone
 	password := requestUser.Password
-	fmt.Println(name,telephone,password)
+	fmt.Println(name, telephone, password)
 
 	if len(telephone) != 11 {
-		response.Response(ctx, http.StatusUnprocessableEntity,422,nil,"手机号必须为11位!")
+		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "手机号必须为11位!")
 		return
 	}
 
 	if len(password) < 6 {
-		response.Response(ctx, http.StatusUnprocessableEntity,422,nil,"密码不能少于6位!")
+		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "密码不能少于6位!")
 		return
 	}
 
@@ -46,37 +47,34 @@ func WwWw(ctx *gin.Context) {
 
 	// 判断手机号是否存在
 	if isTelephoneExist(DB, telephone) {
-		response.Response(ctx, http.StatusUnprocessableEntity,422,nil,"用户已经存在!")
+		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "用户已经存在!")
 		return
 	}
 	// 创建用户
 	// 加密用户密码
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		response.Response(ctx, http.StatusInternalServerError,500,nil,"密码加密失败!")
+		response.Response(ctx, http.StatusInternalServerError, 500, nil, "密码加密失败!")
 		return
 	}
 	newUser := model.User{
-		Names:      name,
+		Names:     name,
 		Telephone: telephone,
 		Password:  string(hashedPassword),
 	}
 
 	DB.Create(&newUser)
-	response.Success(ctx, nil,"注册成功")
+	response.Success(ctx, nil, "注册成功")
 
 }
 
-
 func isTelephoneExist(db *gorm.DB, telephone string) bool {
 	var user model.User
-	if res := db.Where("telephone = ?",telephone).First(&user);res.Error != nil {
+	if res := db.Where("telephone = ?", telephone).First(&user); res.Error != nil {
 		return false
 	}
 	return true
 }
-
-
 
 func Login(ctx *gin.Context) {
 	DB := comm.GetPGDB()
@@ -86,22 +84,23 @@ func Login(ctx *gin.Context) {
 	ctx.Bind(&requestUser)
 
 	//获取参数
-	telephone := requestUser.Telephone
+	name := requestUser.Names
+	// telephone := requestUser.Telephone
 	password := requestUser.Password
 	//数据验证
-	fmt.Println(telephone, "手机号码长度", len(telephone))
-	if len(telephone) != 11 {
-		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "手机号必须为11位")
-		return
-	}
+	// fmt.Println(telephone, "手机号码长度", len(telephone))
+	// if len(telephone) != 11 {
+	// 	response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "手机号必须为11位")
+	// 	return
+	// }
 	if len(password) < 6 {
 		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "密码不能少于6位")
 		return
 	}
 
-	//判断手机号是否存在
+	//判断用户是否存在
 	var user model.User
-	DB.Where("telephone = ?", telephone).First(&user)
+	DB.Where("names = ?", name).First(&user)
 	if user.ID == 0 {
 		response.Response(ctx, http.StatusUnprocessableEntity, 400, nil, "用户不存在")
 		return
@@ -135,13 +134,13 @@ func Info(ctx *gin.Context) {
 
 func Upatefile(ctx *gin.Context) {
 
-		// 单文件
-		file, _ := ctx.FormFile("./")
-		log.Println(file.Filename)
+	// 单文件
+	file, _ := ctx.FormFile("./")
+	log.Println(file.Filename)
 
-		dst := "./" + file.Filename
-		// 上传文件至指定的完整文件路径
-		ctx.SaveUploadedFile(file, dst)
+	dst := "./" + file.Filename
+	// 上传文件至指定的完整文件路径
+	ctx.SaveUploadedFile(file, dst)
 
-		ctx.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
-} 
+	ctx.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+}
