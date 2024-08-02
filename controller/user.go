@@ -7,12 +7,14 @@ import (
 	"hellow/model"
 	"log"
 	"net/http"
+	"time"
 
 	"hellow/response"
 
 	"hellow/utils"
 
 	"github.com/gin-gonic/gin"
+
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -143,4 +145,29 @@ func Upatefile(ctx *gin.Context) {
 	ctx.SaveUploadedFile(file, dst)
 
 	ctx.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+}
+
+func Vip_Time(ctx *gin.Context) {
+
+	DB := comm.GetPGDB()
+	currentTime := time.Now()
+
+	var requestUser = model.User{}
+	ctx.Bind(&requestUser)
+
+	//获取参数
+	name := requestUser.Names
+	fast_time := model.User{
+		VIP_TIME: time.Now(),
+	}
+
+	DB.Where("names = ?", name).First(&fast_time)
+	if fast_time.VIP_TIME.Before(currentTime) {
+
+		response.Response(ctx, http.StatusUnprocessableEntity, 400, nil, "用户vip已过期")
+
+		return
+	}
+
+	response.Success(ctx, gin.H{"VIP_time": fast_time.VIP_TIME}, "VIP未到期")
 }

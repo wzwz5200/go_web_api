@@ -11,10 +11,8 @@ import (
 	"gorm.io/gorm"
 )
 
-
 var DB *gorm.DB
 var PgDB *gorm.DB
-
 
 func InitDB() *gorm.DB {
 
@@ -42,13 +40,13 @@ func GetDB() *gorm.DB {
 }
 
 func GetPG() *gorm.DB {
-	dsn := "host=127.0.0.1 port=5432 user=postgres dbname=golang password=123456 sslmode=disable TimeZone=Asia/Shanghai"
+	dsn := "host=127.0.0.1 port=5432 user=postgres dbname=golang password=18326307873qq sslmode=disable TimeZone=Asia/Shanghai"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Println(err)
 	}
 	db.AutoMigrate(&model.User{})
-
+	db.AutoMigrate(&model.Building{})
 	PgDB = db
 	return db
 }

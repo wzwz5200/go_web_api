@@ -12,6 +12,8 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	r.POST("/api/auth/register", controller.Registe)
 	r.POST("/api/auth/login", controller.Login)
 
+	r.POST("/api/auth/vip", controller.Vip_Time)
+
 	return r
 
 }
