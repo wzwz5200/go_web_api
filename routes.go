@@ -13,6 +13,7 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	r.POST("/api/auth/login", controller.Login)
 
 	r.POST("/api/auth/Vip", controller.Vip_Time)
+	r.POST("/api/add/vip", controller.Add_vip_time)
 
 	return r
 

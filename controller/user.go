@@ -158,7 +158,7 @@ func Vip_Time(ctx *gin.Context) {
 	//获取参数
 	name := requestUser.Names
 	fast_time := model.User{
-		VIP_TIME: time.Now(),
+		VIP_TIME: time.Time{},
 	}
 
 	DB.Where("names = ?", name).First(&fast_time)
@@ -170,4 +170,28 @@ func Vip_Time(ctx *gin.Context) {
 	}
 
 	response.Success(ctx, gin.H{"VIP_time": fast_time.VIP_TIME}, "VIP未到期")
+}
+
+func Add_vip_time(ctx *gin.Context) {
+
+	DB := comm.GetPGDB()
+
+	var requestUser = model.User{}
+	ctx.Bind(&requestUser)
+
+	//获取参数
+	name := requestUser.Names
+	fast_time := model.User{
+		VIP_TIME: time.Time{},
+	}
+
+	DB.Where("names = ?", name).First(&fast_time)
+
+	newtime := fast_time.VIP_TIME.Add(730 * time.Hour)
+
+	fast_time.VIP_TIME = newtime
+
+	DB.Save(&fast_time)
+
+	response.Success(ctx, gin.H{"VIP_time": newtime}, "VIP时间已增加1个月")
 }
