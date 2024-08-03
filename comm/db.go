@@ -45,6 +45,7 @@ func GetPG() *gorm.DB {
 	if err != nil {
 		log.Println(err)
 	}
+
 	db.AutoMigrate(&model.User{})
 	db.AutoMigrate(&model.Building{})
 	PgDB = db

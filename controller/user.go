@@ -48,7 +48,7 @@ func Registe(ctx *gin.Context) {
 	log.Println(name, telephone, password)
 
 	// 判断手机号是否存在
-	if isTelephoneExist(DB, telephone) {
+	if isNameExist(DB, requestUser.Names) {
 		response.Response(ctx, http.StatusUnprocessableEntity, 422, nil, "用户已经存在!")
 		return
 	}
@@ -70,11 +70,17 @@ func Registe(ctx *gin.Context) {
 
 }
 
-func isTelephoneExist(db *gorm.DB, telephone string) bool {
+func isNameExist(db *gorm.DB, names string) bool {
 	var user model.User
-	if res := db.Where("telephone = ?", telephone).First(&user); res.Error != nil {
+	db.Where("names = ?", names).Limit(1).Find(&user)
+	if user.Names == "" {
+
 		return false
 	}
+	// if res := db.Where("telephone = ?", telephone).First(&user); res.Error != nil {
+	// 	return false
+	// }
+
 	return true
 }
 
